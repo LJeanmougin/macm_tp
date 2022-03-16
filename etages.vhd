@@ -49,18 +49,34 @@ begin
   pc_plus_4 <= sig_pc_plus_4;
 end architecture;
 
--- -------------------------------------------------
+-------------------------------------------------
 
--- -- Etage DE
+-- Etage DE
 
--- LIBRARY IEEE;
--- USE IEEE.STD_LOGIC_1164.ALL;
--- USE IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
--- entity etageDE is
--- end entity
+entity etageDE is
+  PORT(
+    i_DE, WD_ER, pc_plus_4 : in std_logic_vector(31 downto 0);
+    Op3_ER : in std_logic_vector(3 downto 0);
+    RegSrc, ImmSrc : in std_logic_vector(1 downto 0);
+    RegWr, clk : in std_logic;
+    Reg1, Reg2 : out std_logic_vector(3 downto 0);
+    Op1, Op2, extImm : out std_logic_vector(31 downto 0);
+    Op3_DE : out std_logic_vector(3 downto 0)
+  );
+end entity;
 
--- -------------------------------------------------
+architecture etageDE_arch of etageDE is
+  signal sigOp1, sigOp2 : std_logic_vector(3 downto 0);
+begin
+  sigOp1 <= i_DE(19 downto 16) when
+  Op3_DE <= i_DE(15 downto 12);
+end architecture;
+
+-------------------------------------------------
 
 -- -- Etage EX
 
