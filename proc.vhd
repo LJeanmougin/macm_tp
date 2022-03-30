@@ -22,14 +22,192 @@ architecture dataPath_arch of dataPath is
 begin
 
   -- FE
- 
+  fe : ENTITY work.etageFE
+    PORT MAP(
+      Res_RE,
+      npc_fwd_br,
+      PCSrc_ER,
+      Bpris_EX,
+      Gel_LI,
+      clk,
+      pc_plus_4,
+      i_FE
+    );
   -- DE
+  de : ENTITY work.etageDE
+    PORT MAP(
+      i_DE,
+      Res_RE,
+      pc_plus_4,
+      Op3_RE_out,
+      RegSrc,
+      immSrc,
+      RegWR,
+      clk,
+      a1_DE,
+      a2_DE,
+      Op1_DE,
+      Op2_DE,
+      extImm_DE,
+      Op3_DE
+    );
+
+  instr_DE <= i_DE;
 
   -- EX
- 
+  ex : ENTITY work.etageEX
+    PORT MAP(
+      Op1_EX,
+      Op2_EX,
+      extImm_EX,
+      Res_fwd_ME,
+      Res_RE,
+      Op3_EX,
+      EA_EX,
+      EB_EX,
+      ALUSrc_EX,
+      ALUCtrl_EX,
+      CC,
+      Res_EX,
+      WD_EX,
+      npc_fwd_br,
+      Op3_EX_out
+    );
   -- ME
- 
+  me : ENTITY work.etageME
+    PORT MAP(
+      Res_ME,
+      WD_ME,
+      Op3_ME,
+      clk,
+      MemWr_Mem,
+      Res_Mem_ME,
+      Res_ALU_ME,
+      Op3_ME_out,
+      Res_fwd_ME
+    );
   -- RE
- 
+  re : ENTITY work.etageER
+    PORT MAP(
+      Res_Mem_RE,
+      Res_ALU_RE,
+      Op3_RE,
+      MemToReg_RE,
+      Res_RE,
+      Op3_RE_out
+    );
   
+  -- inter FE DE
+  regFEDE : ENTITY work.Reg32
+    PORT MAP(
+      i_FE,
+      i_DE,
+      Gel_DI,
+      RAZ_DI,
+      clk
+    );
+
+  -- inter DE EX
+  regDEEXa1 : ENTITY work.Reg4
+    PORT MAP(
+      a1_DE,
+      a1,
+      '1',
+      Clr_EX,
+      clk
+    );
+  
+  regDEEXa2 : ENTITY work.Reg4
+    PORT MAP(
+      a2_DE,
+      a2,
+      '1',
+      Clr_EX,
+      clk
+    );
+
+  regDEEXOp1 : ENTITY work.Reg32
+    PORT MAP(
+      Op1_DE,
+      Op1_EX,
+      '1',
+      Clr_EX,
+      clk
+    );
+   
+  regDEEXOp2 : ENTITY work.Reg32
+    PORT MAP(
+      Op2_DE,
+      Op2_EX,
+      '1',
+      Clr_EX,
+      clk
+    );
+
+  regDEEXOp3 : ENTITY work.Reg4
+    PORT MAP(
+      Op3_DE,
+      Op3_EX,
+      '1',
+      Clr_EX,
+      clk
+    );
+  
+  -- inter EX ME
+
+  regEXMERes : ENTITY work.Reg32
+    PORT MAP(
+      Res_EX,
+      Res_ME,
+      '1',
+      '1',
+      clk
+    );
+  
+  regEXMEWD : ENTITY work.Reg32
+    PORT MAP(
+      WD_EX,
+      WD_ME,
+      '1',
+      '1',
+      clk
+    );
+  
+  regEXMEOp3 : ENTITY work.Reg4
+    PORT MAP(
+      Op3_EX_out,
+      Op3_ME,
+      '1',
+      '1',
+      clk
+    );
+
+  -- inter ME RE
+
+  regMERERes : ENTITY work.Reg32
+    PORT MAP(
+      Res_Mem_ME,
+      Res_Mem_RE,
+      '1',
+      '1',
+      clk
+    );
+
+  regMERERes_alu : ENTITY work.Reg32
+    PORT MAP(
+      Res_ALU_ME,
+      Res_ALU_RE,
+      '1',
+      '1',
+      clk
+    );
+  
+  regMEREOp3 : ENTITY work.Reg4
+    PORT MAP(
+      Op3_ME_out,
+      Op3_RE,
+      '1',
+      '1',
+      clk
+    );
 end architecture;
