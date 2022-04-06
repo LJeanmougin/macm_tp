@@ -74,7 +74,45 @@ begin
   end process;
 end architecture;
 
+entity Reg2 is
+  PORT(
+    source : in std_logic_vector(1 downto 0);
+    output : out std_logic_vector(1 downto 0);
+    clk : in std_logic
+  );
+end entity;
 
+architecture arch_reg of Reg2 is
+  signal sig : std_logic := '0';
+begin
+  output <= sig;
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      sig <= source;
+    end if;
+  end process
+end architecture;
+  
+entity Reg1 is
+  PORT(
+    source : in std_logic;
+    output : out std_logic;
+    clk : in std_logic
+  );
+end entity;
+
+architecture arch_reg of Reg1 is
+  signal sig : std_logic := '0';
+begin
+  output <= sig;
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      sig <= source;
+    end if;
+  end process;
+end architecture;
 -------------------------------------------------
 
 -- Register bank
