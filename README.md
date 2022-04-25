@@ -24,3 +24,13 @@ You can however edit the duration if needed.
 6. This will compile all the necessary files, run the simulation and open gtkwave.
 
 7. Check your signals.
+
+## What has been done
+
+1. The whole architecture of the simplified ARM processor.
+
+2. Simple tests on additions and register writing.
+
+## What has to be done
+
+1. Extensive testbench to determine if the processor is able to load and store data from and to the memory and verify that the processor can manage data hazards.

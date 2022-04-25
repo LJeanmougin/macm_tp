@@ -10,10 +10,10 @@ USE IEEE.NUMERIC_STD.ALL;
 LIBRARY WORK;
 USE WORK.ALL;
 
-entity control_test is
-end control_test;
+entity cpu_test is
+end cpu_test;
 
-architecture behavior of control_test is
+architecture behavior of cpu_test is
     constant clkpulse : Time := 5 ns;
     signal E_CLK : std_logic;
 begin
