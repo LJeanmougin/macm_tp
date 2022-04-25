@@ -138,3 +138,21 @@ begin
             (others => 'X');
   
 end architecture;
+
+------------
+-- porte ET
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity and_gate is
+  PORT(
+    a, b : in std_logic;
+    res : out std_logic
+  );
+end entity;
+architecture and_gate_arch of and_gate is
+begin
+  res <= a and b;
+end architecture;

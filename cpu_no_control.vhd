@@ -12,7 +12,8 @@ entity dataPath is
     clk,  ALUSrc_EX, MemWr_Mem, PCSrc_ER, Bpris_EX, Gel_LI, Gel_DI, RAZ_DI, RegWR, Clr_EX, MemToReg_RE : in std_logic;
     RegSrc, EA_EX, EB_EX, immSrc, ALUCtrl_EX : in std_logic_vector(1 downto 0);
     instr_DE: out std_logic_vector(31 downto 0);
-    a1, a2, CC: out std_logic_vector(3 downto 0)
+    a1, a2, CC: out std_logic_vector(3 downto 0);
+    Op3_EX_Out_alea, Op3_ME_Out_alea, Op3_RE_Out_alea : out std_logic_vector(3 downto 0)
 );      
 end entity;
 
@@ -73,6 +74,7 @@ begin
       npc_fwd_br,
       Op3_EX_out
     );
+    Op3_EX_Out_alea <= Op3_EX_out;
   -- ME
   me : ENTITY work.etageME
     PORT MAP(
@@ -86,6 +88,7 @@ begin
       Op3_ME_out,
       Res_fwd_ME
     );
+    Op3_ME_Out_alea <= Op3_ME_out;
   -- RE
   re : ENTITY work.etageER
     PORT MAP(
@@ -96,9 +99,9 @@ begin
       Res_RE,
       Op3_RE_out
     );
-  
+    Op3_RE_Out_alea <= Op3_RE_out;
   -- inter FE DE
-  regFEDE : ENTITY work.Reg32
+  regFEDE : ENTITY work.Reg32sync
     PORT MAP(
       i_FE,
       i_DE,
@@ -126,7 +129,7 @@ begin
       clk
     );
 
-  regDEEXOp1 : ENTITY work.Reg32
+  regDEEXOp1 : ENTITY work.Reg32sync
     PORT MAP(
       Op1_DE,
       Op1_EX,
@@ -135,7 +138,7 @@ begin
       clk
     );
    
-  regDEEXOp2 : ENTITY work.Reg32
+  regDEEXOp2 : ENTITY work.Reg32sync
     PORT MAP(
       Op2_DE,
       Op2_EX,
@@ -144,6 +147,15 @@ begin
       clk
     );
 
+  regDEEXextImm : ENTITY work.Reg32sync
+    PORT MAP(
+      extImm_DE,
+      extImm_EX,
+      '1',
+      Clr_EX,
+      clk
+    );
+  
   regDEEXOp3 : ENTITY work.Reg4
     PORT MAP(
       Op3_DE,
@@ -155,7 +167,7 @@ begin
   
   -- inter EX ME
 
-  regEXMERes : ENTITY work.Reg32
+  regEXMERes : ENTITY work.Reg32sync
     PORT MAP(
       Res_EX,
       Res_ME,
@@ -164,7 +176,7 @@ begin
       clk
     );
   
-  regEXMEWD : ENTITY work.Reg32
+  regEXMEWD : ENTITY work.Reg32sync
     PORT MAP(
       WD_EX,
       WD_ME,
@@ -184,7 +196,7 @@ begin
 
   -- inter ME RE
 
-  regMERERes : ENTITY work.Reg32
+  regMERERes : ENTITY work.Reg32sync
     PORT MAP(
       Res_Mem_ME,
       Res_Mem_RE,
@@ -193,7 +205,7 @@ begin
       clk
     );
 
-  regMERERes_alu : ENTITY work.Reg32
+  regMERERes_alu : ENTITY work.Reg32sync
     PORT MAP(
       Res_ALU_ME,
       Res_ALU_RE,

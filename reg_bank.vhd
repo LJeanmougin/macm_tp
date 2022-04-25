@@ -8,7 +8,7 @@ END PACKAGE bus_mux_pkg;
 
 -------------------------------------------------
 
--- 32 bits Register (For PC storage and register files)
+-- 32 bits Register (For PC storage)
 
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
@@ -26,7 +26,7 @@ architecture arch_reg of Reg32 is
   signal sig : std_logic_vector(31 downto 0):=(others => '0');
 begin
   output <= sig;
-  process(clk)
+  process(clk, raz)
   begin
     if raz = '0' then
       sig <= (others => '0');
@@ -39,7 +39,40 @@ begin
     end if;
   end process;
 end architecture;
-          
+
+
+-----------------------------------------------
+-- 32 bits Register (For inter-stage buffers )
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity Reg32sync is
+  PORT(
+    source: in std_logic_vector(31 downto 0);
+    output : out std_logic_vector(31 downto 0);
+    wr, raz, clk : in std_logic
+    );
+end entity;
+
+architecture arch_reg_sync of Reg32sync is
+  signal sig : std_logic_vector(31 downto 0):=(others => '0');
+begin
+  output <= sig;
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      if raz = '0' then
+        sig <= (others => '0');
+      else
+        if(wr = '1') then
+          sig <= source;    
+        end if;
+      end if;
+    end if;
+  end process;
+end architecture;
 -------------------------------------------------
 
 -- 4 bits Register (For PC storage and register files)
@@ -74,31 +107,43 @@ begin
   end process;
 end architecture;
 
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
 entity Reg2 is
   PORT(
     source : in std_logic_vector(1 downto 0);
     output : out std_logic_vector(1 downto 0);
-    clk : in std_logic
+    raz, clk : in std_logic
   );
 end entity;
 
 architecture arch_reg of Reg2 is
-  signal sig : std_logic := '0';
+  signal sig : std_logic_vector(1 downto 0) := "00";
 begin
   output <= sig;
   process(clk)
   begin
     if(rising_edge(clk)) then
-      sig <= source;
+      if raz = '0' then
+        sig <= (others => '0');
+      else
+        sig <= source;
+      end if;
     end if;
-  end process
+  end process;
 end architecture;
-  
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
 entity Reg1 is
   PORT(
     source : in std_logic;
     output : out std_logic;
-    clk : in std_logic
+    raz, clk : in std_logic
   );
 end entity;
 
@@ -109,7 +154,11 @@ begin
   process(clk)
   begin
     if(rising_edge(clk)) then
-      sig <= source;
+      if raz = '0' then
+        sig <= '0';
+      else
+        sig <= source;
+      end if;
     end if;
   end process;
 end architecture;
@@ -139,7 +188,7 @@ END ENTITY RegisterBank;
 
 
 architecture arch_reg_bank of RegisterBank IS
-  signal regs : bus_mux_array(31 downto 0);
+  signal regs : bus_mux_array(15 downto 0) := ((others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'), (others => '0'));
 
 begin
   data_o_0 <= pc_in when to_integer(unsigned(s_reg_0)) = 15 else regs(to_integer(unsigned(s_reg_0)));
